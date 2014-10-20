@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <style name="FunCamTheme" parent="@style/_FunCamTheme"/>
+
+  <style name="_FunCamTheme" parent="android:Theme.Holo.Light">
+
+    <item name="android:editTextBackground">@drawable/funcamtheme_edit_text_holo_light</item>
+
+    <item name="android:textColorHighlight">#9947f910</item>
+    <item name="android:textSelectHandleLeft">@drawable/funcamtheme_text_select_handle_left</item>
+    <item name="android:textSelectHandleRight">@drawable/funcamtheme_text_select_handle_right</item>
+    <item name="android:textSelectHandle">@drawable/funcamtheme_text_select_handle_middle</item>
+
+    <item name="android:listChoiceIndicatorMultiple">@drawable/funcamtheme_btn_check_holo_light</item>
+
+    <item name="android:listChoiceIndicatorSingle">@drawable/funcamtheme_btn_radio_holo_light</item>
+
+    <item name="android:buttonStyle">@style/ButtonFunCamTheme</item>
+
+    <item name="android:imageButtonStyle">@style/ImageButtonFunCamTheme</item>
+
+    <item name="android:dropDownSpinnerStyle">@style/SpinnerFunCamTheme</item>
+
+    <item name="android:progressBarStyleHorizontal">@style/ProgressBarFunCamTheme</item>
+
+    <item name="android:seekBarStyle">@style/SeekBarFunCamTheme</item>
+
+    <item name="android:listChoiceBackgroundIndicator">@drawable/funcamtheme_list_selector_holo_light</item>
+
+    <item name="android:activatedBackgroundIndicator">@drawable/funcamtheme_activated_background_holo_light</item>
+
+    <item name="android:fastScrollThumbDrawable">@drawable/funcamtheme_fastscroll_thumb_holo</item>
+
+  </style>
+
+</resources>
