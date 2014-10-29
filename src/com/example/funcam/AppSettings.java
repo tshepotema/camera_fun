@@ -96,9 +96,9 @@ public class AppSettings extends Activity {
 
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.action_take_photo:
-			Intent openCamera = new Intent(getApplication(), Camera.class);
-			startActivity(openCamera);
+		case R.id.action_video:
+			Intent videoMain = new Intent(getApplication(), Video.class);
+			startActivity(videoMain);
 			return true;
 		case R.id.action_app_main:
 			finish();
@@ -106,6 +106,10 @@ public class AppSettings extends Activity {
 		case R.id.action_app_help:
 			Intent openHelp = new Intent(getApplication(), AppHelp.class);
 			startActivity(openHelp);
+			return true;
+		case R.id.action_share:
+			Intent shareMain = new Intent(getApplication(), SocialShare.class);
+			startActivity(shareMain);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

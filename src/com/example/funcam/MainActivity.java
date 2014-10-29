@@ -10,12 +10,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.example.funcam.MapSectionFragment;
 
@@ -51,6 +47,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         // Set up the ViewPager, attaching the adapter and setting up a listener for when the user swipes between sections.
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mAppSectionsPagerAdapter);
+        mViewPager.setOffscreenPageLimit(3);
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
@@ -63,8 +60,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < mAppSectionsPagerAdapter.getCount(); i++) {
             // Create a tab with text corresponding to the page title defined by the adapter.
-            // Also specify this Activity object, which implements the TabListener interface, 
-        	// as the listener for when this tab is selected.
+            // Also specify this Activity object, which implements the TabListener interface, as the listener for when this tab is selected.
             actionBar.addTab(
                     actionBar.newTab()
                             .setText(mAppSectionsPagerAdapter.getPageTitle(i))
@@ -101,10 +97,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         @Override
         public Fragment getItem(int i) {
             switch (i) {
-                /*case 0:
-                    // The first section of the app is the most interesting -- it offers
-                    // a launchpad into the other demonstrations in this example application.
-                    return new LaunchpadSectionFragment();*/
                 case 0:
                 	//list photos uploaded to web
                     return new WebPhotosFragment();
@@ -115,109 +107,20 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 	//show the map view on this segment
                     return new MapSectionFragment();
                 default:
-                    // The other sections of the app are dummy placeholders.
-                    Fragment fragment = new DummySectionFragment();
-                    Bundle args = new Bundle();
-                    args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, i + 1);
-                    fragment.setArguments(args);
-                    return fragment;
-            }
+                	return new MyPhotosFragment();
+        	}
         }
 
         @Override
         public int getCount() {
-        	//return 3;
         	return tabTitles.length;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            //return "Section " + (position + 1);
             return tabTitles[position];
         }
     }
-
-    /**
-     * A fragment that launches other parts of the demo application.
-     */
-    public static class LaunchpadSectionFragment extends Fragment {
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_section_launchpad, container, false);
-
-            // Demonstration of a collection-browsing activity.
-            rootView.findViewById(R.id.demo_collection_button)
-                    .setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent intent = new Intent(getActivity(), CollectionDemoActivity.class);
-                            startActivity(intent);
-                        }
-                    });
-
-            // Demonstration of navigating to external activities.
-            rootView.findViewById(R.id.demo_external_activity)
-                    .setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            // Create an intent that asks the user to pick a photo, but using
-                            // FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET, ensures that relaunching
-                            // the application from the device home screen does not return
-                            // to the external activity.
-                            Intent externalActivityIntent = new Intent(Intent.ACTION_PICK);
-                            externalActivityIntent.setType("image/*");
-                            externalActivityIntent.addFlags(
-                                    Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-                            startActivity(externalActivityIntent);
-                        }
-                    });
-
-            return rootView;
-        }
-    }
-
-    /**
-     * A dummy fragment representing a section of the app, but that simply displays dummy text.
-     */
-    public static class DummySectionFragment extends Fragment {
-
-        public static final String ARG_SECTION_NUMBER = "section_number";
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_section_dummy, container, false);
-            Bundle args = getArguments();
-            
-            String dbg = getString(R.string.dummy_section_text, args.getInt(ARG_SECTION_NUMBER));
-            ((TextView) rootView.findViewById(android.R.id.text1)).setText(dbg);
-            return rootView;
-        }
-    }
-
-    /**
-     * A map view activity fragment
-     */
-    
-    /*public static class MapSectionFragment extends Fragment {
-
-        public static final String ARG_SECTION_NUMBER = "section_number";
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_map, container, false);
-            
-            /*Bundle args = getAruments();
-            ((TextView) rootView.findViewById(android.R.id.text1)).setText(
-                    getString(R.string.dummy_section_text, args.getInt(ARG_SECTION_NUMBER))); * /
-            
-            
-            return rootView;
-        }
-    }*/
     
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -232,6 +135,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		case R.id.action_take_photo:
 			Intent openCamera = new Intent(getApplication(), Camera.class);
 			startActivity(openCamera);
+			finish();
 			return true;
 		case R.id.action_app_settings:
 			Intent openSettings = new Intent(getApplication(), AppSettings.class);
@@ -244,6 +148,14 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		case R.id.action_sync:
 			Intent syncPhotos = new Intent(getApplication(), UploadService.class);
 			startActivity(syncPhotos);
+			return true;
+		case R.id.action_video:
+			Intent videoMain = new Intent("com.example.funcam.VIDEO");
+			startActivity(videoMain);
+			return true;
+		case R.id.action_share:
+			Intent shareMain = new Intent("com.example.funcam.SOCIALSHARE");
+			startActivity(shareMain);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

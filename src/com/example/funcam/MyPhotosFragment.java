@@ -57,8 +57,6 @@ public class MyPhotosFragment extends Fragment {
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View myPhotosView = inflater.inflate(R.layout.myphoto_layout, container, false);
-
-		//Log.d("funcam", "funcam local photos");
 		
 	    mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
 	              Environment.DIRECTORY_PICTURES), "tshepo_photofun");		
@@ -72,13 +70,6 @@ public class MyPhotosFragment extends Fragment {
 		
 		//read a list of photos from local database
 		getLocalPhotos();
-		
-		/*Log.d("funcam", "funcam - webphotoid = " + webPhotoID.toString());		
-		Log.d("funcam", "funcam - uploader = " + photoUploader.toString());		
-		Log.d("funcam", "funcam - description = " + photoDescription.toString());		
-		Log.d("funcam", "funcam - photoUrl = " + photoURL.toString());		
-		Log.d("funcam", "funcam - photoLat = " + photoLat.toString());		
-		Log.d("funcam", "funcam - photoLon = " + photoLon.toString());*/
 
 		adapter = new CustomListMyPhotos(getActivity(), webPhotoID, photoUploader, photoDescription, photoURL, photoLat, photoLon, photoDate);
 		listMyPhotos = (ListView) myPhotosView.findViewById(R.id.lvMyDBPhotos);
@@ -87,8 +78,6 @@ public class MyPhotosFragment extends Fragment {
 		listMyPhotos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {        				
-				//String lat = photoLat.get(position);
-				//String lon = photoLon.get(position);
 				final String photoID = webPhotoID.get(position);
 				String photoDesc = photoDescription.get(position);
 				String photoPath = photoURL.get(position);
@@ -103,12 +92,11 @@ public class MyPhotosFragment extends Fragment {
 				text.setText("" + photoDesc);
 				ImageView imageView = (ImageView) dialog.findViewById(R.id.ivPhoto);
 				
-				//Uri photoUri = Uri.parse(photoPath);
-				//imageView.setImageURI(photoUri);				
-				
+				//Log.d("funcam", "funcam local photos path2foto 1 = " + photoPath);
 				Uri imageUri = Uri.fromFile(new File(photoPath));						
 				Picasso.with(myPhotoContext)
-				.load(imageUri)
+				.load("file://" + imageUri)
+				.resize(300, 300)
 				.placeholder(R.drawable.photoholder)
 				.into(imageView);		
 					 
@@ -190,10 +178,21 @@ public class MyPhotosFragment extends Fragment {
         
         getLocalPhotos();
         adapter.notifyDataSetChanged();		
+	}		
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
 	}
-	
-	public void clearResourcesRemote() {
-		//TODO: hint orientation changes
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
 	}
 
 	public void getLocalPhotos() {

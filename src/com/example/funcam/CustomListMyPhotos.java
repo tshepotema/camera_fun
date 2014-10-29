@@ -67,15 +67,13 @@ public class CustomListMyPhotos extends ArrayAdapter<String> {
 		txtPhotoUploader.setText(photoUploader.get(position));
 		txtPhotoDescription.setText(photoDescription.get(position));
 		
-		//Uri imageUri = Uri.parse(photoURL.get(position));		
-		//imageView.setImageURI(imageUri);
-		
 		Uri imageUri = Uri.fromFile(new File(photoURL.get(position)));		
 		
 		Picasso.with(context)
-		.load(imageUri)
+		.load("file://" + imageUri)
 		.placeholder(R.drawable.photoholder)
-		.into(imageView);		
+		.resize(100, 100)
+		.into(imageView);				
 				
 		return rowView;
 	}		

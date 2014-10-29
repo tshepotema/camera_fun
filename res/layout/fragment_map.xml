@@ -18,20 +18,25 @@
               android:layout_height="wrap_content"
               android:layout_toRightOf="@+id/zoom_in"
               android:text="@string/zoom_out" />
+
+          <Button
+              android:id="@+id/prev"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_alignParentTop="true"
+              android:layout_marginLeft="17dp"
+              android:layout_toRightOf="@+id/zoom_out"
+              android:text="@string/go_to_prev" />
+
           <Button
               android:id="@+id/next"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_alignParentTop="true"
-              android:layout_marginLeft="22dp"
-              android:layout_toRightOf="@+id/zoom_out"
-              android:text="@string/go_to_sydney" />
-          <Button
-              android:id="@+id/prev"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_toRightOf="@+id/next"
-              android:text="@string/go_to_bondi" />
+              android:layout_marginRight="27dp"
+              android:layout_toLeftOf="@+id/tilt_more"
+              android:text="@string/go_to_next" />
+          
           <Button
               android:id="@+id/tilt_more"
               android:layout_width="33dp"
@@ -43,7 +48,8 @@
               android:layout_width="33dp"
               android:layout_height="wrap_content"
               android:layout_alignParentRight="true"
-              android:text="@string/tilt_less" />          
+              android:text="@string/tilt_less" />
+          
       </RelativeLayout>
       
 	  <fragment

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_video_upload"
+        android:orderInCategory="101"
+        android:icon="@drawable/ic_action_upload"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_video_upload"/>    
+
+    <item
+        android:id="@+id/action_app_settings"
+        android:orderInCategory="104"
+        android:icon="@drawable/ic_action_settings"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_app_settings"/>
+
+    <item
+        android:id="@+id/action_app_help"
+        android:orderInCategory="105"
+        android:icon="@drawable/ic_action_help"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_app_help"/>    
+        
+    <item
+        android:id="@+id/action_take_photo"
+        android:orderInCategory="106"
+        android:icon="@drawable/ic_action_photo"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_take_photo"/>
+    
+</menu>

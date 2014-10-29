@@ -42,7 +42,6 @@ import android.support.v4.app.Fragment;
 import android.text.SpannableString;
 import android.text.format.DateFormat;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +51,6 @@ import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.funcam.Camera.ImageCaptureFragment.ErrorDialogFragment;
 import com.example.funcam.location.LocationUtils;
@@ -100,19 +98,22 @@ public class MapSectionFragment extends Fragment
     
     Map<String, String> mapWindowMap = new HashMap<String, String>();
     
-	static final CameraPosition PREV =
+	public CameraPosition PREV; /*=
 	        new CameraPosition.Builder().target(new LatLng(-33.891614, 151.276417))
 	                .zoom(15.5f)
 	                .bearing(300)
 	                .tilt(50)
-	                .build();
+	                .build();*/
 	
-	static final CameraPosition NEXT =
+	public CameraPosition NEXT; /*=
 	        new CameraPosition.Builder().target(new LatLng(-33.87365, 151.20689))
 	                .zoom(15.5f)
 	                .bearing(0)
 	                .tilt(25)
-	                .build();
+	                .build();*/
+	
+	Integer photoPosition;
+	ArrayList<String> photoPositionCoords = new ArrayList<String>();
 	
 	private GoogleMap mMap;
 
@@ -159,7 +160,7 @@ public class MapSectionFragment extends Fragment
             
 			Picasso.with(getActivity())
 			.load(mapPhotoURL)
-			.resize(160, 320)
+			.resize(200, 200)
 			.placeholder(R.drawable.photoholder)
 			.into(mapWindowPhoto);	
             
@@ -178,8 +179,7 @@ public class MapSectionFragment extends Fragment
             TextView snippetUi = ((TextView) view.findViewById(R.id.snippet));
             
             SpannableString snippetText = new SpannableString(snippet);
-            snippetText.setSpan(new ForegroundColorSpan(Color.MAGENTA), 0, 10, 0);
-            snippetText.setSpan(new ForegroundColorSpan(Color.BLUE), 12, snippet.length(), 0);
+            snippetText.setSpan(new ForegroundColorSpan(Color.BLUE), 0, snippet.length(), 0);
             snippetUi.setText(snippetText);
         }
     }
@@ -251,6 +251,7 @@ public class MapSectionFragment extends Fragment
 
         rotation = 10;	
         flat = false;	
+        photoPosition = 0;
 				
         mLocationClient = new LocationClient(getActivity(), this, this);        
         
@@ -261,6 +262,7 @@ public class MapSectionFragment extends Fragment
         bZoomIn = (Button) rootView.findViewById(R.id.zoom_in);
         bZoomOut = (Button) rootView.findViewById(R.id.zoom_out);
         
+        bPrev.setEnabled(false);
         bPrev.setOnClickListener(new OnClickListener() {				
 			@Override
 			public void onClick(View v) {
@@ -341,7 +343,7 @@ public class MapSectionFragment extends Fragment
 		
 		// Display the current location in the UI
         String locationCoords = LocationUtils.getLatLng(getActivity(), currentLocation);                		
-        Log.d("camerafun", "MapPhotos updated coordinates trying to update lat, lon");		
+        //Log.d("camerafun", "MapPhotos updated coordinates trying to update lat, lon");		
         if (locationCoords.length() > 1) {
         	String[] parts = locationCoords.split(",");
     		gpsLat = parts[0];
@@ -366,7 +368,7 @@ public class MapSectionFragment extends Fragment
     /* Called by Location Services if the attempt to Location Services fails.*/
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-    	Log.d("cameraResult", "funcam cameraResult -- connection failed for some reason - in method onConnectionFailed ");
+    	//Log.d("cameraResult", "funcam cameraResult -- connection failed for some reason - in method onConnectionFailed ");
         /*
          * Google Play services can resolve some errors it detects.
          * If the error has a resolution, try sending an Intent to
@@ -464,8 +466,7 @@ public class MapSectionFragment extends Fragment
         // We will provide our own zoom controls.
         mMap.getUiSettings().setZoomControlsEnabled(false);
 
-        // Setting an info window adapter allows us to change the both the contents and look of the
-        // info window.
+        // Setting an info window adapter allows us to change the both the contents and look of the info window.
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter());
 
         // Set listeners for marker events.  See the bottom of this class for their behavior.
@@ -493,8 +494,27 @@ public class MapSectionFragment extends Fragment
         if (!checkReady()) {
             return;
         }
-
-        changeCamera(CameraUpdateFactory.newCameraPosition(PREV));
+        
+        if (photoPosition > 0) {
+        	String positionCoords = photoPositionCoords.get(photoPosition);
+        	String[] parts = positionCoords.split(",");
+    		String positionLat = parts[0];
+    		String positionLon = parts[1];
+	        PREV = new CameraPosition.Builder().target(new LatLng(Double.parseDouble(positionLat), Double.parseDouble(positionLon)))
+	            .zoom(15.5f)
+	            .bearing(300)
+	            .tilt(50)
+	            .build();
+    		
+    		changeCamera(CameraUpdateFactory.newCameraPosition(PREV));
+    		photoPosition--;
+    		if (!bNext.isEnabled()) {
+    			bNext.setEnabled(true);
+    		}
+        }
+        if (photoPosition <= 0) {
+        	bPrev.setEnabled(false);
+        }
     }
 
     /**
@@ -504,18 +524,27 @@ public class MapSectionFragment extends Fragment
         if (!checkReady()) {
             return;
         }
-
-        changeCamera(CameraUpdateFactory.newCameraPosition(NEXT), new CancelableCallback() {
-            @Override
-            public void onFinish() {
-                Toast.makeText(getActivity(), "Animation to NEXT complete", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onCancel() {
-                Toast.makeText(getActivity(), "Animation to NEXT canceled", Toast.LENGTH_SHORT).show();
-            }
-        });
+        
+        if (photoPosition+1 < photoPositionCoords.size()) {
+        	String positionCoords = photoPositionCoords.get(photoPosition);
+        	String[] parts = positionCoords.split(",");
+    		String positionLat = parts[0];
+    		String positionLon = parts[1];
+	        NEXT = new CameraPosition.Builder().target(new LatLng(Double.parseDouble(positionLat), Double.parseDouble(positionLon)))
+	            .zoom(15.5f)
+	            .bearing(0)
+	            .tilt(25)
+	            .build();
+	        changeCamera(CameraUpdateFactory.newCameraPosition(NEXT));
+	        photoPosition++;
+	        if (!bPrev.isEnabled()) {
+	        	bPrev.setEnabled(true);
+	        }
+        }
+        
+        if (photoPosition+1 >= photoPositionCoords.size()) {
+        	bNext.setEnabled(false);
+        }
     }
 
     /**
@@ -647,15 +676,6 @@ public class MapSectionFragment extends Fragment
     	@Override
         protected void onPreExecute() {
             super.onPreExecute();
-            // Create a progress dialog
-            mProgressDialog = new ProgressDialog(getActivity());
-            // Set progress dialog title
-            mProgressDialog.setTitle("Funcam Map photos");
-            // Set progress dialog message
-            mProgressDialog.setMessage("Loading...");
-            mProgressDialog.setIndeterminate(false);
-            // Show progress dialog
-            mProgressDialog.show();
         }
 
         @Override
@@ -692,14 +712,13 @@ public class MapSectionFragment extends Fragment
                     mapWindowMap.put(photoID + "_lon", webPhotoLon);
                     mapWindowMap.put(photoID + "_date", dateCaptured);
 
-
                     new CustomAddMarker().execute(webPhotoURL, uploader, description, webPhotoLat, webPhotoLon, dateCaptured, photoID);
                     
+                    String photoCoords = webPhotoLat + "," + webPhotoLon;
+                    
+                    photoPositionCoords.add(photoCoords);
+                    
                 }
-        	                    
-                
-        		//close the progress dialog
-        		mProgressDialog.dismiss();
                                     
             } catch (JSONException e) {
                 e.printStackTrace();

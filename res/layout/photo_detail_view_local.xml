@@ -34,8 +34,9 @@
 	        android:layout_below="@+id/etImageDescription"
 	        android:layout_marginTop="30dp"
 	        android:text="@string/action_back"
-	        android:textSize="14sp"
-	        android:drawableLeft="@drawable/ic_action_previous_item" />
+	        android:textSize="13sp"
+	        android:drawableLeft="@drawable/ic_action_previous_item"
+	        android:background="@drawable/funcamtheme_btn_default_holo_light" />
 
 	    <Button
 	        android:id="@+id/btDelete"
@@ -44,8 +45,9 @@
 	        android:layout_alignParentBottom="true"
 	        android:layout_alignParentRight="true"
 	        android:text="@string/action_delete"
-	        android:textSize="14sp"
-	        android:drawableLeft="@drawable/ic_action_discard" />
+	        android:textSize="13sp"
+	        android:drawableLeft="@drawable/ic_action_discard"
+	        android:background="@drawable/funcamtheme_btn_default_holo_light" />
 
 	    <Button
 	        android:id="@+id/btUpdate"
@@ -55,7 +57,8 @@
 	        android:layout_centerHorizontal="true"
 	        android:drawableLeft="@drawable/ic_action_save"
 	        android:text="@string/action_update"
-	        android:textSize="14sp" />
+	        android:textSize="13sp"
+	        android:background="@drawable/funcamtheme_btn_default_holo_light" />
 
 	</RelativeLayout>		    
 </ScrollView>

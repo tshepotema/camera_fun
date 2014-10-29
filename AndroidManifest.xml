@@ -94,10 +94,46 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".VideoCam"
-            android:label="@string/app_name" >
+            android:name=".Video"
+            android:label="@string/app_name_videos"
+            android:uiOptions="splitActionBarWhenNarrow" >
             <intent-filter>
-                <action android:name="com.example.funcam.VIDEOCAM" />
+                <action android:name="com.example.funcam.VIDEO" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".VideoTake"
+            android:label="@string/app_name_video_take"
+            android:uiOptions="splitActionBarWhenNarrow" >
+            <intent-filter>
+                <action android:name="com.example.funcam.VIDEOTAKE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".VideoUpload"
+            android:label="@string/app_name_video_upload"
+            android:uiOptions="splitActionBarWhenNarrow" >
+            <intent-filter>
+                <action android:name="com.example.funcam.VIDEOUPLOAD" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".VideosList"
+            android:label="@string/app_name"
+            android:uiOptions="splitActionBarWhenNarrow" >
+            <intent-filter>
+                <action android:name="com.example.funcam.VIDEOSLIST" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".SocialShare"
+            android:label="@string/app_name_social_share">
+            <intent-filter>
+                <action android:name="com.example.funcam.SOCIALSHARE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

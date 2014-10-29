@@ -15,9 +15,10 @@ import com.example.funcam.database.FuncamDatabaseHelper;
 import com.example.funcam.database.ImagesTable;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -34,6 +35,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class UploadService extends Activity {
@@ -41,17 +43,25 @@ public class UploadService extends Activity {
 	TextView tvTotalImages, tvUploadedImages, tvLocalImages, tvWifiActive;
 	Button btUploadAll, btClose;
 	
-	Integer localImages;
-	String localImagePath;
+	Integer localImages, uploadedImages;
+	String uploader, localImagePath;
 	
 	File mediaStorageDir;
 	
-	ProgressDialog mProgressDialog;
+	ProgressBar pbUploadProgress, pbSpinner;
+	
+	SharedPreferences sharedPref;
+	Editor editor;		
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.upload_service_layout);
+		
+		sharedPref = getSharedPreferences(AppSettings.MyPREFERENCES, Context.MODE_PRIVATE);
+		editor = sharedPref.edit();
+		
+		uploader = sharedPref.getString(AppSettings.nameKey, "funcam_GuestUser");
 		
 		initializeLayout();
 		
@@ -62,6 +72,7 @@ public class UploadService extends Activity {
 			@Override
 			public void onClick(View v) {
 				//start service to upload all images
+				pbSpinner.setVisibility(View.VISIBLE);
 				uploadAllImages();
 			}
 		});
@@ -69,7 +80,7 @@ public class UploadService extends Activity {
 		btClose.setOnClickListener(new OnClickListener() {			
 			@Override
 			public void onClick(View v) {
-				onPause();
+				finish();
 			}
 		});
 	}
@@ -81,25 +92,30 @@ public class UploadService extends Activity {
 		tvWifiActive = (TextView) findViewById(R.id.tvWifiActive);
 		btUploadAll = (Button) findViewById(R.id.btUploadAll);
 		btClose = (Button) findViewById(R.id.btClose);
+		pbUploadProgress = (ProgressBar) findViewById(R.id.pbUploadProgress);
+		pbSpinner = (ProgressBar) findViewById(R.id.pbSpinner);
 								
-    	FuncamDatabaseHelper dbHelper = new FuncamDatabaseHelper(this);
+    	FuncamDatabaseHelper dbHelper = new FuncamDatabaseHelper(UploadService.this);
     	SQLiteDatabase db = dbHelper.getReadableDatabase();
 		db = openOrCreateDatabase(ImagesTable.DATABASE_FUNCAM, SQLiteDatabase.CREATE_IF_NECESSARY, null);
 		db.setLocale(Locale.getDefault());
 
 		Cursor curLocal = db.query(ImagesTable.TABLE_IMAGES, new String[] {ImagesTable.COLUMN_ID}, ImagesTable.COLUMN_UPLOADED + " = 0", null, null, null, null);
 		localImages = curLocal.getCount();
-
-		Cursor curUploaded = db.query(ImagesTable.TABLE_IMAGES, new String[] {ImagesTable.COLUMN_ID},  ImagesTable.COLUMN_UPLOADED + " = 1", null, null, null, null);
-		Integer uploadedImages = curUploaded.getCount();
-		
-		Integer totalImages = localImages + uploadedImages;				
 		
 		curLocal.close();
+
+		Cursor curUploaded = db.query(ImagesTable.TABLE_IMAGES, new String[] {ImagesTable.COLUMN_ID},  ImagesTable.COLUMN_UPLOADED + " = 1", null, null, null, null);
+		uploadedImages = curUploaded.getCount();
+		
+		Integer totalImages = localImages + uploadedImages;				
 		curUploaded.close();
 		
 		db.close();
 		dbHelper.close();
+		
+		pbUploadProgress.setMax(totalImages);
+		pbUploadProgress.setProgress(uploadedImages);
 		
 		tvTotalImages.setText(totalImages.toString());
 		tvUploadedImages.setText(uploadedImages.toString());
@@ -116,7 +132,6 @@ public class UploadService extends Activity {
 		} else {
 			btUploadAll.setEnabled(false);			
 		}
-
 	}
 	
 	public boolean isWifiActive() {
@@ -133,37 +148,44 @@ public class UploadService extends Activity {
 	}
 	
 	public void uploadAllImages() {
-    	FuncamDatabaseHelper dbHelper = new FuncamDatabaseHelper(this);
+    	FuncamDatabaseHelper dbHelper = new FuncamDatabaseHelper(UploadService.this);
     	SQLiteDatabase db = dbHelper.getReadableDatabase();
 		db = openOrCreateDatabase(ImagesTable.DATABASE_FUNCAM, SQLiteDatabase.CREATE_IF_NECESSARY, null);
 		db.setLocale(Locale.getDefault());
 
-		Cursor cur = db.query(ImagesTable.TABLE_IMAGES, null, ImagesTable.COLUMN_UPLOADED + " = 0", null, null, null, null);
+		Cursor cur = db.query(ImagesTable.TABLE_IMAGES, null, ImagesTable.COLUMN_UPLOADED + " = 0", null, null, null, "1");
 		cur.moveToFirst();
+		
+		String myPhotoID = "", myPhotoDescription = "", myPhotoLat = "", myPhotoLon = "", myPhotoDate = "";
 
 		while (cur.isAfterLast() == false) {
-			String myPhotoID = cur.getString(0);
-			String myPhotoDescription = cur.getString(1);
-			String myPhotoLat = cur.getString(2);
-			String myPhotoLon = cur.getString(3);
-			String myPhotoDate = cur.getString(4);
+			myPhotoID = cur.getString(0);
+			myPhotoDescription = cur.getString(1);
+			myPhotoLat = cur.getString(2);
+			myPhotoLon = cur.getString(3);
+			myPhotoDate = cur.getString(4);
 
 			localImagePath = mediaStorageDir.getPath() + File.separator + "IMG_"+ cur.getString(4) + ".jpg";			
-	    	
-			UploadPhoto photoUpload = new UploadPhoto(this);				
-			photoUpload.execute(localImagePath, myPhotoDescription, myPhotoDate, myPhotoLat, myPhotoLon, myPhotoID);
 			
 			cur.moveToNext();
 		}
 		cur.close();
 		db.close();
-		dbHelper.close();		
+		dbHelper.close();
+		
+		if (myPhotoID.isEmpty()) {
+			pbSpinner.setVisibility(View.INVISIBLE);
+			//Log.d("funcam", "funcam uploadservice completed");
+		} else{
+			//Log.d("funcam", "funcam uploadservice start image upload");
+			UploadPhoto photoUpload = new UploadPhoto(UploadService.this);				
+			photoUpload.execute(localImagePath, myPhotoDescription, myPhotoDate, myPhotoLat, myPhotoLon, myPhotoID, uploader);			
+		}
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
-		finish();
 	}
 	
 	
@@ -180,21 +202,13 @@ public class UploadService extends Activity {
 	     }
 	 
 	     protected void onPreExecute() {
-            /*super.onPreExecute();
-            // Create a progress dialog
-            mProgressDialog = new ProgressDialog(mContext);
-            // Set progress dialog title
-            mProgressDialog.setTitle("Funcam");
-            // Set progress dialog message
-            mProgressDialog.setMessage("Uploading photos...");
-            mProgressDialog.setIndeterminate(false);
-            // Show progress dialog
-            mProgressDialog.show();*/	 
+	    	 Log.d("funcam", "funcam uploadservice preExe..");
 	     }
 	 
 	     @Override
 	     protected Void doInBackground(String... params) {
-	 
+				Log.d("funcam", "funcam uploadservice doInBackground... ");
+
 	          try {
 	              String filePath = "file:" + params[0];
 	              String fileDescription = params[1];
@@ -202,27 +216,42 @@ public class UploadService extends Activity {
 	              String filePhotoLat = params[3];
 	              String filePhotoLon = params[4];
 	              String myPhotoID = params[5];
+	              String uploader =  params[6];
 	              
 	              Bitmap selectedImage = MediaStore.Images.Media.getBitmap(mContext.getContentResolver(), Uri.parse(filePath));
+	              
+				  Log.d("funcam", "funcam uploadservice doInBackground B4 resizing image... ");
 	 
 	              Bitmap resizedImage;             
-	              resizedImage = getResizedBitmap(selectedImage,500,(int)(selectedImage.getWidth()/(selectedImage.getHeight()/500.0)));
+	              //resizedImage = getResizedBitmap(selectedImage,500,(int)(selectedImage.getWidth()/(selectedImage.getHeight()/500.0)));
+
+				  int width = selectedImage.getWidth();
+				  int height = selectedImage.getHeight();
+				  float scaleWidth = ((float) 200) / width;
+				  float scaleHeight = ((float) 200) / height;
+				  Matrix matrix = new Matrix();
+				  //Log.d("funcam", "funcam uploadservice doInBackground B4 resizing image 2... width = " + width + " height = " + height);
+				  matrix.postScale(scaleWidth, scaleHeight);		 
+				  //Log.d("funcam", "funcam uploadservice doInBackground B4 resizing image 3... Swidth = " + scaleWidth + " Sheight = " + scaleHeight);
+				  resizedImage = Bitmap.createBitmap(selectedImage, 0, 0, width, height, matrix, false);
+				  
+	              //Log.d("funcam", "funcam uploadservice doInBackground image resized ");
 	             
 	              ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	              resizedImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+	              resizedImage.compress(Bitmap.CompressFormat.JPEG, 70, baos);
 	              byte[] byteArrayImage = baos.toByteArray();
 	              String encodedImage = Base64.encodeToString(byteArrayImage, Base64.DEFAULT);
 	 
 	              HttpPost httppost = new HttpPost(URL);
 	              StringEntity se;
-	 
+	              
 	              String SOAPRequestXML = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
 	                        + "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
 	                        + "<soap:Body>"
 	                        + "<UploadPhoto xmlns=\"http://105.235.168.210/DevChallange2/\">"
 	                        + "<PhotoTimeStamp>" + fileTimeStamp + "</PhotoTimeStamp>"
 	                        + "<PhotoDescription>" + fileDescription + "</PhotoDescription>"
-	                        + "<Uploader>Danie</Uploader>"
+	                        + "<Uploader>" + uploader + "</Uploader>"
 	                        + "<Latitude>" + filePhotoLat + "</Latitude>"
 	                        + "<Longitude>" + filePhotoLon + "</Longitude>"
 	                        + "<file>"
@@ -231,19 +260,18 @@ public class UploadService extends Activity {
 	                        + "<fileExtention>jpg</fileExtention>"
 	                        + "</UploadPhoto>"
 	                        + "</soap:Body>" + "</soap:Envelope>";
+	              
 	              se = new StringEntity(SOAPRequestXML, HTTP.UTF_8);
 	 
 	              se.setContentType("text/xml");
 	              httppost.setHeader("Content-Type", "text/xml;charset=UTF-8");
 	              httppost.setHeader( "SOAPAction", SOAP_ACTION );
 	 
-	              httppost.setHeader("Accept",
-	                        "text/xml,application/text+xml,application/soap+xml");
-	               httppost.setEntity(se);
+	              httppost.setHeader("Accept", "text/xml,application/text+xml,application/soap+xml");
+	              httppost.setEntity(se);
 	 
 	              HttpClient httpclient = new DefaultHttpClient();
-	              BasicHttpResponse httpResponse = (BasicHttpResponse) httpclient
-	                        .execute(httppost);   
+	              BasicHttpResponse httpResponse = (BasicHttpResponse) httpclient.execute(httppost);   
 	              
 	              
 					FuncamDatabaseHelper dbHelper = new FuncamDatabaseHelper(mContext);
@@ -261,17 +289,29 @@ public class UploadService extends Activity {
 					db.close();
 					dbHelper.close();
 
-	              Log.d("funcam HTTP RESPONSE", httpResponse.getStatusLine().toString());
+	              Log.d("funcam", "funcam HTTP Response : " + httpResponse.getStatusLine().toString());
 	          } catch (Exception ex) {
-	              Log.d("funcam EXCEPTION", ex.getMessage());
+	              Log.d("funcam", "funcam exeption : " + ex.getMessage());
 	          }
 	          return null;
 	     }
 	 
 	     @Override
 	     protected void onPostExecute(Void result) {
-	    	 /*btUploadAll.setEnabled(false);
-	    	 mProgressDialog.dismiss();*/
+	    	 if (btUploadAll.isEnabled()) {
+	    		 btUploadAll.setEnabled(false);
+	    	 }
+	    	 //Log.d("funcam", "funcam uploadservice POST exe..");
+	    	 
+	    	 uploadedImages++;
+			 tvUploadedImages.setText(uploadedImages.toString());
+			 
+			 localImages--;
+			 tvLocalImages.setText(localImages.toString());
+
+	    	 pbUploadProgress.setProgress(uploadedImages);
+	    	 
+	    	 uploadAllImages();
 	     }
 	    
 	     public Bitmap getResizedBitmap(Bitmap bm, int newHeight, int newWidth) {

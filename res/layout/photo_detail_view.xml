@@ -37,7 +37,8 @@
         android:layout_below="@+id/tvPhotoLocation"
         android:layout_marginTop="20dp"
         android:text="@string/action_back"
-        android:drawableLeft="@drawable/ic_action_previous_item" />
+        android:drawableLeft="@drawable/ic_action_previous_item"
+        android:background="@drawable/funcamtheme_btn_default_holo_light" />
 
     <Button
         android:id="@+id/btPegman"
@@ -47,6 +48,7 @@
         android:layout_alignBottom="@+id/btClose"
         android:layout_alignParentRight="true"
         android:drawableLeft="@drawable/pegman"
-        android:text="@string/action_street_view" />
+        android:text="@string/action_street_view"
+        android:background="@drawable/funcamtheme_btn_default_holo_light" />
 
 </RelativeLayout>

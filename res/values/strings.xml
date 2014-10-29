@@ -3,6 +3,10 @@
 
     <string name="app_name">funcam</string>
     <string name="app_name_upload">Upload Photos</string>
+    <string name="app_name_videos">funcam: Videos</string>
+    <string name="app_name_video_take">funcam: Take Video</string>
+    <string name="app_name_video_upload">funcam: Video Upload</string>
+    <string name="app_name_social_share">funcam: Social Share</string>
     
     <string name="webphoto">Web Photo</string>
     <string name="photouploader">Photo Uploader</string>
@@ -29,12 +33,18 @@
     <string name="tvLblLocalImages">Local Images</string>    
     <string name="tvWifiOn">Wifi: On</string>    
 	<string name="uploadall">Upload All</string>
-    
+    <string name="uploadProgress">Upload Progress</string>
+	
     <string name="action_take_photo">Take Photo</string>
     <string name="action_app_settings">Settings</string>
     <string name="action_app_help">Help</string>
     <string name="action_sync">Upload Photos</string>
     <string name="action_app_main">Home</string>
+    
+    <string name="action_app_video">Videos</string>
+    <string name="action_take_video">Take Video</string>    
+    <string name="action_video_upload">Upload Video</string>    
+    <string name="action_videos_list">List Videos</string>
     
     <string name="action_cancel">Close</string>
     <string name="action_save">Save</string>
@@ -43,12 +53,21 @@
     <string name="action_camera">Photo</string>
     <string name="action_back">Back</string>
     <string name="action_street_view">Street View</string>
+
+    <string name="action_share">Social Share</string>
+    
+    <string name="post_to_social_hint">Select social media in the button above and then type message below and post to your selected social media</string>    
+    <string name="update_social_media">Post to social media</string>
     
     <string name="tvUploaderName">Uploader Name</string>
     <string name="tvDefaultMapDistance">Default Map Distance</string>
     <string name="cbUploadWifi">Upload only on WIFI</string>
     <string name="mapMarkerSize">Map Marker Size</string>
     
+    <string name="playerview_text">Latest videos uploaded from funcam app!</string>
+	<string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>    
+    <string name="error_thumbnail_view">There was an error initializing the YouTubeThumbnailView (%1$s)</string>
+	
     <string name="request_position">Position</string>
     <string name="walk_panorama">Walk</string>
 	<string name="down_arrow">\u2193</string>
@@ -64,8 +83,8 @@
     <string name="demo_collection">Demo Collection</string>    
     
     <string name="map_not_ready">Map is not ready yet</string>
-	<string name="go_to_bondi">Previous</string>
-	<string name="go_to_sydney">Next</string>
+	<string name="go_to_prev">Previous</string>
+	<string name="go_to_next">Next</string>
 	<string name="tilt_less">\u2193</string>
 	<string name="tilt_more">\u2191</string>
 	<string name="zoom_in">+</string>

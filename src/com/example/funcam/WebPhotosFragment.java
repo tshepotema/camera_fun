@@ -134,33 +134,6 @@ public class WebPhotosFragment extends Fragment
             return false;
         }
     }
-
-    /**
-     * Calls getLastLocation() to get the current location
-     */
-    /*public boolean getLocation() {
-
-        // If Google Play Services is available
-        if (servicesConnected()) {
-
-            // Get the current location
-            Location currentLocation = mLocationClient.getLastLocation();
-
-            // Display the current location in the UI
-            String locationCoords = LocationUtils.getLatLng(getActivity(), currentLocation);
-            Log.d("camerafun", "WEBPHOTOS updated coordinates trying to update lat, lon");
-            if (locationCoords.length() > 1) {
-            	String[] parts = locationCoords.split(",");
-        		gpsLat = parts[0];
-        		gpsLon = parts[1];
-        		FetchPhotosInArea();
-            } else {
-            	connectionNotAvailable();
-            	return false;
-            }
-        }
-        return true;
-    }*/
 	
 	public void connectionNotAvailable() {
         // Create a progress dialog
@@ -396,7 +369,7 @@ public class WebPhotosFragment extends Fragment
         				textLocation = (TextView) dialog.findViewById(R.id.tvPhotoLocation);        				
         				textLocation.setText("GPS: " + lat + "," + lon);
         				
-        				getAddress();
+        				getAddress(lat, lon);
         				
         				ImageView imageView = (ImageView) dialog.findViewById(R.id.ivPhoto);
         				
@@ -445,7 +418,7 @@ public class WebPhotosFragment extends Fragment
 
     }
 
-    public void getAddress() {
+    public void getAddress(String lat, String lon) {
 
         // In Gingerbread and later, use Geocoder.isPresent() to see if a geocoder is available.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD && !Geocoder.isPresent()) {
@@ -454,10 +427,8 @@ public class WebPhotosFragment extends Fragment
         }
 
         if (servicesConnected()) {
-            // Get the current location
-            Location currentLocation = mLocationClient.getLastLocation();
             // Start the background task
-            (new GetAddressTask(getActivity())).execute(currentLocation);
+            (new GetAddressTask(getActivity())).execute(lat, lon);
         }
     }
 
@@ -469,7 +440,7 @@ public class WebPhotosFragment extends Fragment
      * Void     - indicates that progress units are not used by this subclass
      * String   - An address passed to onPostExecute()
      */
-    protected class GetAddressTask extends AsyncTask<Location, Void, String> {
+    protected class GetAddressTask extends AsyncTask<String, Void, String> {
 
         // Store the context passed to the AsyncTask when the system instantiates it.
         Context localContext;
@@ -489,7 +460,7 @@ public class WebPhotosFragment extends Fragment
          * address, and return the address to the UI thread.
          */
         @Override
-        protected String doInBackground(Location... params) {
+        protected String doInBackground(String... params) {
             /*
              * Get a new geocoding service instance, set for localized addresses. This example uses
              * android.location.Geocoder, but other geocoders that conform to address standards
@@ -498,7 +469,8 @@ public class WebPhotosFragment extends Fragment
             Geocoder geocoder = new Geocoder(localContext, Locale.getDefault());
 
             // Get the current location from the input parameter list
-            Location location = params[0];
+            String lat = params[0];
+            String lon = params[1];
 
             // Create a list to contain the result address
             List <Address> addresses = null;
@@ -510,9 +482,7 @@ public class WebPhotosFragment extends Fragment
                  * Call the synchronous getFromLocation() method with the latitude and
                  * longitude of the current location. Return at most 1 address.
                  */
-                addresses = geocoder.getFromLocation(location.getLatitude(),
-                    location.getLongitude(), 1
-                );
+                addresses = geocoder.getFromLocation(Double.parseDouble(lat),Double.parseDouble(lon), 1);
 
                 // Catch network or other I/O problems.
                 } catch (IOException exception1) {
@@ -531,10 +501,7 @@ public class WebPhotosFragment extends Fragment
 
                     // Construct a message containing the invalid arguments
                     String errorString = getString(
-                            R.string.illegal_argument_exception,
-                            location.getLatitude(),
-                            location.getLongitude()
-                    );
+                            R.string.illegal_argument_exception,lat,lon);
                     // Log the error and print the stack trace
                     Log.e(LocationUtils.APPTAG, errorString);
                     exception2.printStackTrace();

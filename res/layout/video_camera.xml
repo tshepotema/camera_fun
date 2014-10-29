@@ -1,11 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<MediaController xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <VideoView
         android:id="@+id/vvClip"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:layout_centerInParent="true" />
 
-</MediaController>
+    <Button
+        android:id="@+id/btClose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:drawableLeft="@drawable/ic_action_previous_item"
+        android:text="@string/action_cancel" 
+        android:textSize="12sp" />
+
+    <Button
+        android:id="@+id/btListVideos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:drawableLeft="@drawable/ic_action_view_as_grid"
+        android:text="@string/action_videos_list"
+        android:textSize="12sp" />
+
+    <Button
+        android:id="@+id/btNewVideo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/btListVideos"
+        android:drawableLeft="@drawable/ic_action_video"
+        android:text="@string/action_take_video"
+        android:textSize="12sp" />
+
+</RelativeLayout>

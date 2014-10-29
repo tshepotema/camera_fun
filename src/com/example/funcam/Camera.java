@@ -26,8 +26,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -48,8 +46,7 @@ import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationRequest;
-
-import com.example.funcam.MyPhotosFragment;
+import com.squareup.picasso.Picasso;
 
 public class Camera extends FragmentActivity implements ActionBar.TabListener {
 
@@ -108,28 +105,13 @@ public class Camera extends FragmentActivity implements ActionBar.TabListener {
 		return true;
 	}    
 
-    @SuppressWarnings("deprecation")
 	@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                // This is called when the Home (Up) button is pressed in the action bar.
-                // Create a simple intent that starts the hierarchical parent activity and
-                // use NavUtils in the Support Package to ensure proper handling of Up.
-                Intent upIntent = new Intent(this, MainActivity.class);
-                if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-                    // This activity is not part of the application's task, so create a new task
-                    // with a synthesized back stack.
-                    TaskStackBuilder.from(this)
-                            // If there are ancestor activities, they should be added here.
-                            .addNextIntent(upIntent)
-                            .startActivities();
-                    finish();
-                } else {
-                    // This activity is part of the application's task, so simply
-                    // navigate up to the hierarchical parent activity.
-                    NavUtils.navigateUpTo(this, upIntent);
-                }
+            case R.id.action_app_main:
+				Intent openMain = new Intent(getApplication(), MainActivity.class);
+				startActivity(openMain);
+				finish();
                 return true;
     		case R.id.action_app_settings:
     			Intent openSettings = new Intent(getApplication(), AppSettings.class);
@@ -142,6 +124,7 @@ public class Camera extends FragmentActivity implements ActionBar.TabListener {
     		case R.id.action_sync:
     			Intent syncPhotos = new Intent(getApplication(), UploadService.class);
     			startActivity(syncPhotos);
+    			finish();
     			return true;                
         }
         return super.onOptionsItemSelected(item);
@@ -316,8 +299,8 @@ public class Camera extends FragmentActivity implements ActionBar.TabListener {
 			btCancel.setOnClickListener(new OnClickListener() {				
 				@Override
 				public void onClick(View v) {
-					MyPhotosFragment photosFragment = new MyPhotosFragment();
-					photosFragment.clearResourcesRemote();
+					Intent openMain = new Intent(getActivity(), MainActivity.class);
+					startActivity(openMain);
 					getActivity().finish();
 				}
 			});
@@ -518,7 +501,17 @@ public class Camera extends FragmentActivity implements ActionBar.TabListener {
 		            // Image captured and saved to fileUri specified in the Intent
 		    		Log.d("cameraResult", "funcam cameraResult -- image captured successfully to [" + fileUri.toString() + "]");
 		            //Toast.makeText(camContext, "Image saved to:\n" + fileUri.toString(), Toast.LENGTH_LONG).show();
-		            ivPhoto.setImageURI(fileUri);
+		            
+		    		//ivPhoto.setImageURI(fileUri);
+					
+					//Uri imageUri = Uri.fromFile(new File(fileUri));						
+					Picasso.with(getActivity())
+					.load("file://" + fileUri)
+					.resize(200, 200)
+					.placeholder(R.drawable.photoholder)
+					.into(ivPhoto);		
+		    		
+		    		
 		            Log.d("funcam", "funcam about to flip the script haha");
 		            Log.d("funcam", "funcam pre save - uri = " + fileUri + " :: ts = " + imgTimeStamp);
 		            try {
@@ -819,16 +812,14 @@ public class Camera extends FragmentActivity implements ActionBar.TabListener {
 
             // Demonstration of a collection-browsing activity.
             rootView.findViewById(R.id.demo_collection_button)
-                    .setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent intent = new Intent(getActivity(), CollectionDemoActivity.class);
-                            startActivity(intent);
-                        }
-                    });
-
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getActivity(), CollectionDemoActivity.class);
+                        startActivity(intent);
+                    }
+                });
             return rootView;
         }
-    }	
-	
+    }		
 }
