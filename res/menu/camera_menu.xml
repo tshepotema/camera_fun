@@ -7,13 +7,6 @@
         android:icon="@drawable/ic_action_previous_item"
         android:showAsAction="always"
         android:title="@string/action_app_main"/>
-    
-    <item
-        android:id="@+id/action_app_settings"
-        android:orderInCategory="101"
-        android:icon="@drawable/ic_action_settings"
-        android:showAsAction="ifRoom"
-        android:title="@string/action_app_settings"/>
 
     <item
         android:id="@+id/action_app_help"

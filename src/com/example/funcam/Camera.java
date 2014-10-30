@@ -14,6 +14,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
@@ -35,8 +37,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -113,10 +117,6 @@ public class Camera extends FragmentActivity implements ActionBar.TabListener {
 				startActivity(openMain);
 				finish();
                 return true;
-    		case R.id.action_app_settings:
-    			Intent openSettings = new Intent(getApplication(), AppSettings.class);
-    			startActivity(openSettings);
-    			return true;		
     		case R.id.action_app_help:
     			Intent openHelp = new Intent(getApplication(), AppHelp.class);
     			startActivity(openHelp);
@@ -150,7 +150,7 @@ public class Camera extends FragmentActivity implements ActionBar.TabListener {
      */
     public static class AppSectionsPagerAdapter extends FragmentPagerAdapter {
         
-        private static String[] tabTitles = {"Take Photo", "Photo Settings", "Extras"};
+        private static String[] tabTitles = {"Take Photo", "Photo Settings"};
         Context pagerContext;
         
         public AppSectionsPagerAdapter(FragmentManager fm) {
@@ -163,16 +163,12 @@ public class Camera extends FragmentActivity implements ActionBar.TabListener {
                 case 0:
                 	//simply take photos
                     return new ImageCaptureFragment();
-                /*case 1:
-                	//show page to update
-                    return new WebPhotosFragment();*/
+                case 1:
+                	//show page to update settings
+                    return new PhotoSettings();
                 default:
-                    // The other sections of the app are dummy placeholders.
-                    Fragment fragment = new DummySectionFragment();
-                    Bundle args = new Bundle();
-                    args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, i + 1);
-                    fragment.setArguments(args);
-                    return fragment;
+                	//show page to update settings
+                    return new PhotoSettings();
             }
         }
 
@@ -189,20 +185,101 @@ public class Camera extends FragmentActivity implements ActionBar.TabListener {
 	
 
     /**
-     * A dummy fragment representing a section of the app, but that simply displays dummy text.
+     * photo settings section
      */
-    public static class DummySectionFragment extends Fragment {
-
-        public static final String ARG_SECTION_NUMBER = "section_number";
+    public static class PhotoSettings extends Fragment {
+    	EditText etDefaultDescription;
+    	Button btSave, btClose;
+    	CheckBox cbMultiUploads;
+    	RadioButton rbCameraFront, rbCameraBack, rbCameraBoth;
+    	
+    	SharedPreferences sharedPref;
+    	Editor editor;
+    	
+    	private static final String MyPREFERENCES = "MyPrefs" ;
+    	private static final String descriptionKey = "description_key"; 
+    	private static final String multiuploadsKey = "multiuploads_key"; 
+    	private static final String cameraKey = "camera_key";
+    	
+    	Boolean multiuploads;
+    	Integer cameralens;    	
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_section_dummy, container, false);
-            Bundle args = getArguments();
-            ((TextView) rootView.findViewById(android.R.id.text1)).setText(
-                    getString(R.string.dummy_section_text, args.getInt(ARG_SECTION_NUMBER)));
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.camera_settings_fragment, container, false);
+            
+            initializeFragLayout(rootView);
+    		
+    		sharedPref = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+    		editor = sharedPref.edit();
+
+    		etDefaultDescription.setText(sharedPref.getString(descriptionKey, getResources().getString(R.string.settings_default_description)));
+    		multiuploads = sharedPref.getBoolean(multiuploadsKey, true);
+    		cameralens = sharedPref.getInt(cameraKey, 2);
+    	      	      
+    		if (multiuploads) {
+				cbMultiUploads.setChecked(true);
+    		} else {
+				cbMultiUploads.setChecked(false);
+    		}
+    	      
+			switch (cameralens) {
+				case 0:
+					rbCameraBack.setChecked(true);
+					break;
+				case 1:
+					rbCameraFront.setChecked(false);
+					break;
+				case 2:
+					rbCameraBoth.setChecked(false);
+					break;
+			}
+    		
+			btSave.setOnClickListener(new OnClickListener() {			
+				@Override
+				public void onClick(View v) {
+					// update the shared preferences
+					String defaultPhotoDes = etDefaultDescription.getText().toString();
+					
+					editor.putString(descriptionKey, defaultPhotoDes);
+					editor.putBoolean(multiuploadsKey, cbMultiUploads.isChecked());
+					
+					if (rbCameraBack.isChecked()) {
+						editor.putInt(cameraKey, 0);
+					} else if (rbCameraFront.isChecked()) {
+						editor.putInt(cameraKey, 1);
+					} else if (rbCameraBoth.isChecked()) {
+						editor.putInt(cameraKey, 2);						
+					}
+					
+					//save changes in SharedPreferences
+					editor.commit();
+
+					Intent openMain = new Intent(getActivity(), MainActivity.class);
+					startActivity(openMain);					
+					getActivity().finish();
+				}
+			});											
+			
             return rootView;
+        }
+        
+        private void initializeFragLayout(View rootView) {
+        	etDefaultDescription = (EditText) rootView.findViewById(R.id.etDefaultDescription);
+        	cbMultiUploads = (CheckBox) rootView.findViewById(R.id.cbMultiUploads);
+        	rbCameraBack = (RadioButton) rootView.findViewById(R.id.rbCameraBack);
+        	rbCameraFront = (RadioButton) rootView.findViewById(R.id.rbCameraFront);
+        	rbCameraBoth = (RadioButton) rootView.findViewById(R.id.rbCameraBoth);
+        	btSave = (Button) rootView.findViewById(R.id.btSave);
+        	btClose = (Button) rootView.findViewById(R.id.btClose);
+        	btClose.setOnClickListener(new OnClickListener() {				
+				@Override
+				public void onClick(View v) {
+					Intent openMain = new Intent(getActivity(), MainActivity.class);
+					startActivity(openMain);					
+					getActivity().finish();					
+				}
+			});
         }
     }
         
@@ -507,7 +584,7 @@ public class Camera extends FragmentActivity implements ActionBar.TabListener {
 					//Uri imageUri = Uri.fromFile(new File(fileUri));						
 					Picasso.with(getActivity())
 					.load("file://" + fileUri)
-					.resize(200, 200)
+					.resize(300, 300)
 					.placeholder(R.drawable.photoholder)
 					.into(ivPhoto);		
 		    		
@@ -796,30 +873,5 @@ public class Camera extends FragmentActivity implements ActionBar.TabListener {
 			// TODO Auto-generated method stub			
 		}						
 		
-	}	//end class ImageCapture
-	
-	
-	
-    /**
-     * A fragment that launches other parts of the demo application.
-     */
-    public static class LaunchpadSectionFragment extends Fragment {
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_section_launchpad, container, false);
-
-            // Demonstration of a collection-browsing activity.
-            rootView.findViewById(R.id.demo_collection_button)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(getActivity(), CollectionDemoActivity.class);
-                        startActivity(intent);
-                    }
-                });
-            return rootView;
-        }
-    }		
+	}	//end class ImageCapture	
 }

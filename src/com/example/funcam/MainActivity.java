@@ -148,6 +148,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		case R.id.action_sync:
 			Intent syncPhotos = new Intent(getApplication(), UploadService.class);
 			startActivity(syncPhotos);
+			finish();
 			return true;
 		case R.id.action_video:
 			Intent videoMain = new Intent("com.example.funcam.VIDEO");

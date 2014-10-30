@@ -17,6 +17,7 @@ import com.example.funcam.database.ImagesTable;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
@@ -188,6 +189,13 @@ public class UploadService extends Activity {
 		super.onPause();
 	}
 	
+
+	@Override
+	protected void onStop() {
+		Intent openMain = new Intent(getApplication(), MainActivity.class);
+		startActivity(openMain);		
+		super.onStop();
+	}
 	
 	public class UploadPhoto extends AsyncTask<String, Void, Void> {
 		 

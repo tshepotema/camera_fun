@@ -7,6 +7,7 @@
     <string name="app_name_video_take">funcam: Take Video</string>
     <string name="app_name_video_upload">funcam: Video Upload</string>
     <string name="app_name_social_share">funcam: Social Share</string>
+    <string name="app_name_splash">funcam: Photo &amp; Video Sharing</string>
     
     <string name="webphoto">Web Photo</string>
     <string name="photouploader">Photo Uploader</string>
@@ -56,6 +57,16 @@
 
     <string name="action_share">Social Share</string>
     
+    <string name="settings_default_description_lbl">Default Photo Description</string>
+    <string name="settings_default_description">mobile photo uploaded via funcam app</string>
+    <string name="settings_multiple_upload">Allow multiple photo uploads?</string>
+    <string name="settings_multi_upload">Multi Uploads</string>
+    <string name="settings_camera_setup">Camera Settings</string>
+    <string name="settings_camera_backonly">Back Only</string>
+    <string name="settings_camera_frontonly">Front Only</string>
+    <string name="settings_camera_both">Both</string>
+        
+    
     <string name="post_to_social_hint">Select social media in the button above and then type message below and post to your selected social media</string>    
     <string name="update_social_media">Post to social media</string>
     
@@ -76,12 +87,7 @@
     <string name="up_arrow">\u2191</string>
     <string name="duration">Customize Duration</string>
 	<string name="panorama_not_ready">Panorama is not ready yet</string>    
-    
-    <string name="dummy_section_text">Section %1d is just a dummy section.</string>
-
-    <string name="demo_external_activity">Demo External Activity</string>
-    <string name="demo_collection">Demo Collection</string>    
-    
+        
     <string name="map_not_ready">Map is not ready yet</string>
 	<string name="go_to_prev">Previous</string>
 	<string name="go_to_next">Next</string>
