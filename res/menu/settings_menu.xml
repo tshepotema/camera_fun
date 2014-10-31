@@ -1,0 +1,32 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.funcam.MainActivity" >
+
+    <item
+        android:id="@+id/action_app_main"
+        android:orderInCategory="99"
+        android:icon="@drawable/ic_action_previous_item"
+        android:showAsAction="always"
+        android:title="@string/action_app_main"/>
+        
+    <item
+        android:id="@+id/action_video"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:title="@string/action_app_video"
+        android:icon="@drawable/ic_action_video" />
+
+    <item
+        android:id="@+id/action_app_help"
+        android:orderInCategory="101"
+        android:icon="@drawable/ic_action_help"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_app_help"/>
+    
+    <item
+        android:id="@+id/action_share"
+        android:orderInCategory="105"
+        android:showAsAction="never"
+        android:title="@string/action_share"/>
+    
+</menu>

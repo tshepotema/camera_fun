@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_app_main"
+        android:orderInCategory="99"
+        android:icon="@drawable/ic_action_previous_item"
+        android:showAsAction="always"
+        android:title="@string/action_app_main"/>
+
+    <item
+        android:id="@+id/action_video"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_action_video"
+        android:showAsAction="always"
+        android:title="@string/action_take_video"/>
+
+    <item
+        android:id="@+id/action_video_upload"
+        android:orderInCategory="101"
+        android:icon="@drawable/ic_action_upload"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_video_upload"/>    
+
+    <item
+        android:id="@+id/action_videos_list"
+        android:orderInCategory="102"
+        android:icon="@drawable/ic_action_view_as_grid"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_videos_list"/>    
+    
+    <item
+        android:id="@+id/action_app_settings"
+        android:orderInCategory="104"
+        android:icon="@drawable/ic_action_settings"
+        android:showAsAction="never"
+        android:title="@string/action_app_settings"/>
+
+    <item
+        android:id="@+id/action_app_help"
+        android:orderInCategory="105"
+        android:icon="@drawable/ic_action_help"
+        android:showAsAction="never"
+        android:title="@string/action_app_help"/>
+    
+</menu>

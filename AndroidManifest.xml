@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.funcam"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="19" />
+
+	<uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true"/>    
+    
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+        
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/FunCamTheme" >
+        <activity
+            android:name=".Splash"
+            android:label="@string/app_name_splash"
+            android:noHistory="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="com.example.funcam.MAINACTIVITY" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Camera"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="com.example.funcam.CAMERA" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".AppSettings"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="com.example.funcam.APPSETTINGS" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".AppHelp"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Dialog" >
+            <intent-filter>
+                <action android:name="com.example.funcam.APPHELP" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".UploadService"
+            android:label="@string/app_name_upload" >
+            <intent-filter>
+                <action android:name="com.example.funcam.UPLOADSERVICE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".StreetView"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="com.example.funcam.STREETVIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Video"
+            android:label="@string/app_name_videos"
+            android:uiOptions="splitActionBarWhenNarrow" >
+            <intent-filter>
+                <action android:name="com.example.funcam.VIDEO" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".VideoTake"
+            android:label="@string/app_name_video_take"
+            android:uiOptions="splitActionBarWhenNarrow" >
+            <intent-filter>
+                <action android:name="com.example.funcam.VIDEOTAKE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".VideoUpload"
+            android:label="@string/app_name_video_upload"
+            android:uiOptions="splitActionBarWhenNarrow" >
+            <intent-filter>
+                <action android:name="com.example.funcam.VIDEOUPLOAD" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".VideosList"
+            android:label="@string/app_name"
+            android:uiOptions="splitActionBarWhenNarrow" >
+            <intent-filter>
+                <action android:name="com.example.funcam.VIDEOSLIST" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".SocialShare"
+            android:label="@string/app_name_social_share">
+            <intent-filter>
+                <action android:name="com.example.funcam.SOCIALSHARE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".SocialShareMedia"
+            android:label="@string/app_name_social_share">
+            <intent-filter>
+                <action android:name="com.example.funcam.SOCIALSHAREMEDIA" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        
+        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+        
+        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyCxsxkNef6I7ITSl0lnZPQBc_iBNg_rw0s" />
+        
+    </application>
+</manifest>
